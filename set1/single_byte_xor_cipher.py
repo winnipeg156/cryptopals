@@ -11,18 +11,21 @@ def score(bytes):
     return score
 
 
-cipher_text = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
-outputs = []
-scores = []
+def crack_xor(cipher_text):
+    outputs = []
+    scores = []
+    for i in range(256):
+        key = binascii.hexlify(i.to_bytes() * len(cipher_text))
+        output = fixed_xor(cipher_text, key)
+        outputs.append(output)
 
-for i in range(256):
-    key = binascii.hexlify(i.to_bytes() * len(cipher_text))
-    output = fixed_xor(cipher_text, key)
-    outputs.append(output)
+    for output in outputs:
+        curr_output = (score(output), output)
+        scores.append(curr_output)
 
-for output in outputs:
-    curr_output = (score(output), output)
-    scores.append(curr_output)
+    return max(scores) 
 
-plain_text = max(scores)[1]
-print(plain_text)
+
+if __name__ == "__main__":
+    cipher_text = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
+    print(crack_xor(cipher_text)[1])
